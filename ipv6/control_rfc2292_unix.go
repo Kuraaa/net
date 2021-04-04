@@ -10,8 +10,8 @@ package ipv6
 import (
 	"unsafe"
 
-	"golang.org/x/net/internal/iana"
-	"golang.org/x/net/internal/socket"
+	"github.com/Kuraaa/net/internal/iana"
+	"github.com/Kuraaa/net/internal/socket"
 
 	"golang.org/x/sys/unix"
 )

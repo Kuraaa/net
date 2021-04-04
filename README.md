@@ -1,13 +1,13 @@
 # Go Networking
 
-[![Go Reference](https://pkg.go.dev/badge/golang.org/x/net.svg)](https://pkg.go.dev/golang.org/x/net)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Kuraaa/net.svg)](https://pkg.go.dev/github.com/Kuraaa/net)
 
 This repository holds supplementary Go networking libraries.
 
 ## Download/Install
 
-The easiest way to install is to run `go get -u golang.org/x/net`. You can
-also manually git clone the repository to `$GOPATH/src/golang.org/x/net`.
+The easiest way to install is to run `go get -u github.com/Kuraaa/net`. You can
+also manually git clone the repository to `$GOPATH/src/github.com/Kuraaa/net`.
 
 ## Report Issues / Send Patches
 

@@ -20,10 +20,10 @@ RUN go install golang.org/x/build/autocertcache
 RUN go install go4.org/syncutil/singleflight
 RUN go install golang.org/x/crypto/acme/autocert
 
-COPY . /go/src/golang.org/x/net
+COPY . /go/src/github.com/Kuraaa/net
 
 # Install binary to /go/bin:
-WORKDIR /go/src/golang.org/x/net/http2/h2demo
+WORKDIR /go/src/github.com/Kuraaa/net/http2/h2demo
 RUN go install -tags "netgo"
 
 

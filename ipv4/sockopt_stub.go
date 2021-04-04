@@ -10,8 +10,8 @@ package ipv4
 import (
 	"net"
 
-	"golang.org/x/net/bpf"
-	"golang.org/x/net/internal/socket"
+	"github.com/Kuraaa/net/bpf"
+	"github.com/Kuraaa/net/internal/socket"
 )
 
 func (so *sockOpt) getMulticastInterface(c *socket.Conn) (*net.Interface, error) {

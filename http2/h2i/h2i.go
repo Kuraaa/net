@@ -36,8 +36,8 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/hpack"
+	"github.com/Kuraaa/net/http2"
+	"github.com/Kuraaa/net/http2/hpack"
 	"golang.org/x/term"
 )
 

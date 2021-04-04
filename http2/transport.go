@@ -31,9 +31,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"golang.org/x/net/http/httpguts"
-	"golang.org/x/net/http2/hpack"
-	"golang.org/x/net/idna"
+	"github.com/Kuraaa/net/http/httpguts"
+	"github.com/Kuraaa/net/http2/hpack"
+	"github.com/Kuraaa/net/idna"
 )
 
 const (
@@ -1509,6 +1509,40 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 		}
 	}
 
+	tempHeaders := make(map[string]string)
+	chromeHeaderOrder := [...]string{
+		":method",
+		":authority",
+		":scheme",
+		":path",
+		"host",
+		"device-memory",
+		"dpr",
+		"viewport-width",
+		"rtt",
+		"downlink",
+		"ect",
+		"connection",
+		"pragma",
+		"content-length",
+		"cache-control",
+		"sec-ch-ua",
+		"origin",
+		"sec-ch-ua-mobile",
+		"upgrade-insecure-requests",
+		"user-agent",
+		"content-type",
+		"accept",
+		"sec-fetch-site",
+		"sec-fetch-mode",
+		"sec-fetch-user",
+		"sec-fetch-dest",
+		"referer",
+		"accept-encoding",
+		"accept-language",
+		"cookie"}
+
+	//Header Order
 	enumerateHeaders := func(f func(name, value string)) {
 		// 8.1.2.3 Request Pseudo-Header Fields
 		// The :path pseudo-header field includes the path and query parts of the
@@ -1602,6 +1636,7 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 	// modifying the hpack state.
 	hlSize := uint64(0)
 	enumerateHeaders(func(name, value string) {
+		tempHeaders[strings.ToLower(name)] = value
 		hf := hpack.HeaderField{Name: name, Value: value}
 		hlSize += uint64(hf.Size())
 	})
@@ -1613,14 +1648,37 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 	trace := httptrace.ContextClientTrace(req.Context())
 	traceHeaders := traceHasWroteHeaderField(trace)
 
-	// Header list size is ok. Write the headers.
+	//Iterate chromeHeaderOrder chronologically and try grab value from tempHeaders-map
+	for _, name := range chromeHeaderOrder {
+		name = strings.ToLower(name)
+		if value, ok := tempHeaders[name]; ok {
+			cc.writeHeader(name, value)
+			if traceHeaders {
+				traceWroteHeaderField(trace, name, value)
+			}
+			delete(tempHeaders, name)
+		}
+	}
+
+	//Append remaining headers last (f.e. trailer)
+	if len(tempHeaders) != 0 {
+		for name, value := range tempHeaders {
+			name = strings.ToLower(name)
+			cc.writeHeader(name, value)
+			if traceHeaders {
+				traceWroteHeaderField(trace, name, value)
+			}
+		}
+	}
+
+	/* Header list size is ok. Write the headers.
 	enumerateHeaders(func(name, value string) {
 		name = strings.ToLower(name)
 		cc.writeHeader(name, value)
 		if traceHeaders {
 			traceWroteHeaderField(trace, name, value)
 		}
-	})
+	})*/
 
 	return cc.hbuf.Bytes(), nil
 }
